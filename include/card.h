@@ -1,7 +1,7 @@
 #ifndef CARD_H
 #define CARD_H
 
-#define VAL_BITS 4
+#define VALUE_BITS 4
 #define VALUE_MASK 0xF
 // Mask 15 - 0000 1111
 // ((1 << VAL_BITS) - 1)
@@ -20,4 +20,3 @@ unsigned int getCardSuit(Card card);
 void printCard(Card card);
 
 #endif // CARD_H
-
