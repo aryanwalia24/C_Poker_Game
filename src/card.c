@@ -115,9 +115,21 @@ unsigned int getCardSuit(Card card)
 
 void printCard(Card card)
 {
+   static const char *faceStrings[] = {
+       "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+   static const char *suitStrings[] = {
+       "Hearts", "Spades", "Clubs", "Diamonds"};
+
    unsigned int value = getCardValue(card);
    unsigned int suit = getCardSuit(card);
    char suitChar = mapNumberToSuit(suit);
 
-   printf("Card %c%u\n", suitChar, value);
+   if (value > 0 && value <= 13 && suit > 0 && suit <= 4)
+   {
+      printf("%s of %s\n", faceStrings[value - 1], suitStrings[suit - 1]);
+   }
+   else
+   {
+      printf("Invalid card\n");
+   }
 }
