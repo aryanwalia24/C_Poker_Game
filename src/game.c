@@ -43,31 +43,28 @@ void startGame(Player players[], int numPlayers, Deck *deck)
 
 void playRound(Player players[], int numPlayers, Deck *deck)
 {
-    // FUntions to add later 
-
-
     printf("\nStarting a new round...\n");
     shuffleDeck(deck);
 
     printf("Setting blinds...\n");
-    // setBlinds(players, numPlayers);
+    setBlinds(players, numPlayers);
 
     printf("Dealing cards to players...\n");
-    // dealCards(players, numPlayers, deck);
+    dealCards(players, numPlayers, deck);
 
-    // executeBettingRound(players, numPlayers);
+    executeBettingRound(players, numPlayers);
 
     // Modes
-    // handleFlop(deck);
-    // executeBettingRound(players, numPlayers);
+    handleFlop(deck);
+    executeBettingRound(players, numPlayers);
 
-    // handleTurn(deck);
-    // executeBettingRound(players, numPlayers);
+    handleTurn(deck);
+    executeBettingRound(players, numPlayers);
 
-    // handleRiver(deck);
-    // executeBettingRound(players, numPlayers);
+    handleRiver(deck);
+    executeBettingRound(players, numPlayers);
 
-    // determineWinner(players, numPlayers);
+    determineWinner(players, numPlayers);
     printf("Round complete.\n");
 }
 
@@ -92,8 +89,88 @@ int displayMenu()
     }
 }
 
+void setBlinds(Player players[], int numPlayers)
+{
+    if (numPlayers < 2)
+    {
+        printf("Not enough players to set blinds.\n");
+        return;
+    }
 
-// INput Validators (handle failure conditions for input stream)
+    // Assuming the first player is the small blind, and the next is the big blind
+    int smallBlindIdx = 0;
+    int bigBlindIdx = 1;
+
+    updateWallet(&players[smallBlindIdx], -SMALL_BLIND);
+    updateWallet(&players[bigBlindIdx], -BIG_BLIND);
+
+    printf("%s pays the small blind of $%d\n", players[smallBlindIdx].name, SMALL_BLIND);
+    printf("%s pays the big blind of $%d\n", players[bigBlindIdx].name, BIG_BLIND);
+}
+
+void dealCards(Player players[], int numPlayers, Deck *deck)
+{
+    for (int i = 0; i < numPlayers; i++)
+    {
+        printf("%s receives two cards.\n", players[i].name);
+        drawCard(deck); // first card
+        drawCard(deck); // second card
+    }
+}
+
+void executeBettingRound(Player players[], int numPlayers)
+{
+    printf("Executing betting round...\n");
+    for (int i = 0; i < numPlayers; i++)
+    {
+        if (players[i].wallet > 0)
+        {
+            int bet = getValidBet(players[i].wallet, "Enter bet amount (or 0 to check/fold): ");
+            if (bet > 0)
+            {
+                updateWallet(&players[i], -bet);
+                printf("%s bets $%d.\n", players[i].name, bet);
+            }
+        }
+    }
+}
+
+// flop (reveal 3 community cards)
+void handleFlop(Deck *deck)
+{
+    printf("Revealing the flop...\n");
+    drawCard(deck); // Card 1
+    drawCard(deck); // Card 2
+    drawCard(deck); // Card 3
+}
+
+// turn (reveal 1 community card)
+void handleTurn(Deck *deck)
+{
+    printf("Revealing the turn...\n");
+    drawCard(deck);
+}
+
+// river (reveal 1 community card)
+void handleRiver(Deck *deck)
+{
+    printf("Revealing the river...\n");
+    drawCard(deck);
+}
+
+void determineWinner(Player players[], int numPlayers)
+{
+    if (numPlayers < 1)
+    {
+        printf("No players to determine a winner.\n");
+        return;
+    }
+
+    // Simplified placeholder logic for determining a winner
+    int winnerIndex = rand() % numPlayers; // Random winner for now
+    printf("The winner is %s!\n", players[winnerIndex].name);
+}
+
 static int getValidInt(int min, int max, const char *prompt)
 {
     char buffer[256];
