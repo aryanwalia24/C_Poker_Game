@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include "deck.h"
+#include "poker_hand.h"
 
 // Constants
 #define MAX_PLAYERS 10

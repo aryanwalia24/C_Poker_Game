@@ -97,7 +97,7 @@ void setBlinds(Player players[], int numPlayers)
         return;
     }
 
-    // Assuming the first player is the small blind, and the next is the big blind
+    //  first player is the small blind, and the next is the big blind
     int smallBlindIdx = 0;
     int bigBlindIdx = 1;
 
@@ -166,9 +166,24 @@ void determineWinner(Player players[], int numPlayers)
         return;
     }
 
-    // Simplified placeholder logic for determining a winner
-    int winnerIndex = rand() % numPlayers; // Random winner for now
-    printf("The winner is %s!\n", players[winnerIndex].name);
+    Card communityCards[5];
+    PokerHand bestHands[MAX_PLAYERS];
+
+    for (int i = 0; i < numPlayers; i++)
+    {
+        evaluatePokerHand(players[i].hand, communityCards, &bestHands[i]);
+    }
+
+    int winnerIndex = 0;
+    for (int i = 1; i < numPlayers; i++)
+    {
+        if (comparePokerHands(&bestHands[i], &bestHands[winnerIndex]) > 0)
+        {
+            winnerIndex = i;
+        }
+    }
+
+    printf("The winner is %s with a %d!\n", players[winnerIndex].name, bestHands[winnerIndex].rank);
 }
 
 static int getValidInt(int min, int max, const char *prompt)
