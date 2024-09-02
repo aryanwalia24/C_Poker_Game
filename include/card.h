@@ -1,6 +1,9 @@
 #ifndef CARD_H
 #define CARD_H
 
+#include <stdio.h> 
+#include <ctype.h> 
+
 #define VALUE_BITS 4
 #define VALUE_MASK 0xF
 // Mask 15 - 0000 1111

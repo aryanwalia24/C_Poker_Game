@@ -17,4 +17,4 @@ void initialiseDeck(Deck *deck);
 void shuffleDeck(Deck *deck);
 Card drawCard(Deck *deck);
 
-#endif DECK_H
+#endif // DECK_H
