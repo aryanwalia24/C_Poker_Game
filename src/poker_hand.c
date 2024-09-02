@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// used static to  keep these functions private to this file only
 static int checkFlush(const Card cards[], int numCards);
 static int checkStraight(const Card cards[], int numCards);
 static void getRankFrequencies(const Card cards[], int numCards, int rankFrequencies[]);
@@ -135,7 +134,34 @@ static void getRankFrequencies(const Card cards[], int numCards, int rankFrequen
     }
 }
 
-static int compareRanks(const void *a, const void *b) // qsort
+static int compareRanks(const void *a, const void *b)
 {
     return getCardValue(*(Card *)b) - getCardValue(*(Card *)a);
+}
+
+const char *pokerHandToString(HandRank rank)
+{
+    switch (rank)
+    {
+    case HIGH_CARD:
+        return "High Card";
+    case PAIR:
+        return "Pair";
+    case TWO_PAIR:
+        return "Two Pair";
+    case THREE_OF_A_KIND:
+        return "Three of a Kind";
+    case STRAIGHT:
+        return "Straight";
+    case FLUSH:
+        return "Flush";
+    case FULL_HOUSE:
+        return "Full House";
+    case FOUR_OF_A_KIND:
+        return "Four of a Kind";
+    case STRAIGHT_FLUSH:
+        return "Straight Flush";
+    default:
+        return "Unknown Hand";
+    }
 }

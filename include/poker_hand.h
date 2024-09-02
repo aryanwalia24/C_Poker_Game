@@ -25,5 +25,6 @@ typedef struct
 // Function Prototypes
 void evaluatePokerHand(Card playerCards[], Card communityCards[], PokerHand *bestHand);
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2);
+const char *pokerHandToString(HandRank rank);
 
 #endif // POKER_HAND_H
