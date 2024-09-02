@@ -8,15 +8,15 @@ char mapNumberToSuit(unsigned int suitNum)
    switch (suitNum)
    {
    case 0:
-      return 'H'; // H
+      return 'H'; // Hearts
    case 1:
-      return 'D'; // D
+      return 'D'; // Diamonds
    case 2:
-      return 'C'; // C
+      return 'C'; // Clubs
    case 3:
-      return 'S'; // S
+      return 'S'; // Spades
    default:
-      return 'H'; // Invalid input 'H'
+      return 'H'; // Default to Hearts for invalid input
    }
 }
 
@@ -25,15 +25,15 @@ unsigned int mapSuitToNumber(char suit)
    switch (suit)
    {
    case 'H':
-      return 0; // H
+      return 0; // Hearts
    case 'D':
-      return 1; // D
+      return 1; // Diamonds
    case 'C':
-      return 2; // C
+      return 2; // Clubs
    case 'S':
-      return 3; // S
+      return 3; // Spades
    default:
-      return 0; // Invalid input 0
+      return 0; // Default to Hearts for invalid input
    }
 }
 
@@ -51,9 +51,8 @@ void parseCardInput(void *input, int format, Card *card)
       }
 
       char suit = str[0];
-      unsigned int value = (unsigned int)atoi(str + 1); // or (str+1) = str[1]
+      unsigned int value = (unsigned int)atoi(str + 1); // or (str+1) = str[1] 
 
-      // Errorschecker {
       if (value < 1 || value > 13)
       {
          printf("Invalid card value. Please enter a value between 1 and 13.\n");
@@ -65,10 +64,8 @@ void parseCardInput(void *input, int format, Card *card)
          printf("Invalid suit. Please enter 'H', 'D', 'C', or 'S'.\n");
          return;
       }
-      // }
-
       // getting suit number -> left shifting 4 times and -> add cardValue
-      *card = (mapSuitToNumber(suit) << VALUE_BITS) | (value & VALUE_BITS);
+      *card = (mapSuitToNumber(suit) << VALUE_BITS) | (value & VALUE_MASK);
    }
    else if (format == 2)
    {
@@ -76,11 +73,10 @@ void parseCardInput(void *input, int format, Card *card)
       // 1 - H , 2 - D, 3 - C, 4 - S
       // 1 - 13 (Ace to Kings)
       // ex : String -> "1 4" -> 4 of Hearts
-
       char *str = (char *)input;
       unsigned int suitNum, value;
-      // Errorschecker {
-      if (sscanf(str, "%u %u", &suitNum, &value) != 2) // returns number of space seperated parts
+
+      if (sscanf(str, "%u %u", &suitNum, &value) != 2)
       {
          printf("Invalid input format. Expected format: 'suitNum value'.\n");
          return;
@@ -91,15 +87,12 @@ void parseCardInput(void *input, int format, Card *card)
          printf("Invalid suit number or card value. Suit number must be 1-4 and value must be 1-13.\n");
          return;
       }
-      // }
 
-      // left shifting suit Num 4 times and -> add cardValue
-      // suitNum-1 to convert 1-4 range to 0-3 for bit manipulation
       *card = ((suitNum - 1) << VALUE_BITS) | (value & VALUE_MASK);
    }
    else
    {
-      printf("Invalid format. Supported formats are 1.(Char)(INT) and 2.(suitNum) (Value)\n");
+      printf("Invalid format. Supported formats are 1. (Char)(INT) and 2. (suitNum) (Value)\n");
    }
 }
 
