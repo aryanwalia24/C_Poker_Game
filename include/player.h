@@ -12,9 +12,9 @@
 typedef struct
 {
     int id;
-    char name[MAX_NAME_LENGTH];
+    char *name;
     int wallet;
-    Card hand[HAND_SIZE];
+    Card *hand;
     int pin;
 } Player;
 
@@ -27,6 +27,7 @@ int getValidInt(int min, int max, const char *prompt);
 void setPlayerPin(Player *player);
 int validatePlayerPin(const Player *player);
 void displayPlayerCardsSimple(const Player *player);
+void freePlayer(Player *player);
 void clearConsole();
 
 #endif // PLAYER_H

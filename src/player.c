@@ -27,10 +27,25 @@ int createPlayer(int id, const char *name, int startMoney, Player *player)
     }
 
     player->id = id;
+    player->name = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
+    if (player->name == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for player name.\n");
+        return -1;
+    }
     strncpy(player->name, name, MAX_NAME_LENGTH - 1);
     player->name[MAX_NAME_LENGTH - 1] = '\0';
+
     player->wallet = startMoney;
-    player->pin = 0; // Initialize PIN
+    player->pin = 0;
+
+    player->hand = (Card *)malloc(HAND_SIZE * sizeof(Card));
+    if (player->hand == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for player hand.\n");
+        free(player->name);
+        return -1;
+    }
 
     return 0;
 }
@@ -113,9 +128,22 @@ void displayPlayerCardsSimple(const Player *player)
     }
 
     printf("%s's cards: ", player->name);
-    printCard(player->hand[0]);
-    printCard(player->hand[1]);
+    for (int i = 0; i < HAND_SIZE; i++)
+    {
+        printCard(player->hand[i]);
+    }
     printf("\n");
+}
+
+void freePlayer(Player *player)
+{
+    if (player == NULL)
+    {
+        return;
+    }
+
+    free(player->name);
+    free(player->hand);
 }
 
 void clearConsole()
@@ -134,7 +162,7 @@ int getValidInt(int min, int max, const char *prompt)
     {
         printf(prompt, max);
         scanf("%d", &value);
-        while (getchar() != '\n') // Clear input buffer
+        while (getchar() != '\n')
             ;
     } while (value < min || value > max);
     return value;
