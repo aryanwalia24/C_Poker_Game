@@ -3,6 +3,8 @@
 
 #include "card.h"
 
+#define MAX_CARDS 5
+
 typedef enum
 {
     HIGH_CARD,
@@ -14,17 +16,19 @@ typedef enum
     FULL_HOUSE,
     FOUR_OF_A_KIND,
     STRAIGHT_FLUSH
-} HandRank;
+} PokerHandRank;
 
 typedef struct
 {
-    HandRank rank;
-    Card cards[5];
+    PokerHandRank rank;
+    Card cards[MAX_CARDS];
 } PokerHand;
 
-// Function Prototypes
-void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *bestHand);
+PokerHand *createPokerHand();
+void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand);
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2);
 const char *pokerHandToString(int rank);
+// void freePokerHand(PokerHand *hand);
+// void cleanupPokerHands(PokerHand *hands, int numHands);
 
 #endif // POKER_HAND_H

@@ -2,14 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+PokerHand *hands = NULL;
+int numHands = 0;
+
 static int checkFlush(const Card cards[], int numCards);
 static int checkStraight(const Card cards[], int numCards);
 static void getRankFrequencies(const Card cards[], int numCards, int rankFrequencies[]);
 static int compareRanks(const void *a, const void *b);
 
+PokerHand *createPokerHand()
+{
+    static PokerHand hand;
+    hand.rank = HIGH_CARD;
+    memset(hand.cards, 0, MAX_CARDS * sizeof(Card));
+    return &hand;
+}
+
 void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand)
 {
     Card combined[7]; // 2 player cards + 5 community cards
+
     memcpy(combined, playerCards, 2 * sizeof(Card));
     memcpy(combined + 2, communityCards, 5 * sizeof(Card));
 
@@ -32,7 +44,7 @@ void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHan
             pairCount++;
     }
 
-    // Best possible hand
+    // Determine the best possible hand
     if (straight && flush)
     {
         optimalHand->rank = STRAIGHT_FLUSH;
@@ -70,7 +82,7 @@ void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHan
         optimalHand->rank = HIGH_CARD;
     }
 
-    memcpy(optimalHand->cards, combined, 5 * sizeof(Card));
+    memcpy(optimalHand->cards, combined, MAX_CARDS * sizeof(Card));
 }
 
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2)
@@ -81,7 +93,7 @@ int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2)
         return -1;
 
     // Same rank, compare values
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < MAX_CARDS; i++)
     {
         if (getCardValue(hand1->cards[i]) > getCardValue(hand2->cards[i]))
             return 1;
@@ -102,7 +114,9 @@ static int checkFlush(const Card cards[], int numCards)
     for (int i = 0; i < 4; i++)
     {
         if (suits[i] >= 5)
+        {
             return 1;
+        }
     }
     return 0;
 }
