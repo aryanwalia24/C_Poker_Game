@@ -16,10 +16,12 @@
 
 typedef unsigned int Card; // positive values & expected bitwise operations
 
-// Function Prototypes
 void parseCardInput(void *input, int format, Card *card);
 unsigned int getCardValue(Card card);
 unsigned int getCardSuit(Card card);
 void printCard(Card card);
+
+char mapNumberToSuit(unsigned int suitNum);
+unsigned int mapSuitToNumber(char suit);
 
 #endif // CARD_H
