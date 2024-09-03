@@ -3,9 +3,16 @@
 #include <time.h>
 #include "../include/deck.h"
 
-// Initialising the deck 
 void initialiseDeck(Deck *deck)
 {
+    deck->cards = (Card *)malloc(NUM_CARDS * sizeof(Card));
+    deck->inplay = (int *)malloc(NUM_CARDS * sizeof(int));
+    if (deck->cards == NULL || deck->inplay == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for deck.\n");
+        exit(EXIT_FAILURE);
+    }
+
     int idx = 0;
     for (unsigned int suit = 0; suit < 4; suit++)
     {
@@ -19,7 +26,7 @@ void initialiseDeck(Deck *deck)
     deck->top = 0;
 }
 
-// using Fisher-Yates algorithm
+// fisher-yates algorithm
 void shuffleDeck(Deck *deck)
 {
     srand((unsigned int)time(NULL));
@@ -46,4 +53,10 @@ Card drawCard(Deck *deck)
     deck->top++;
 
     return currCard;
+}
+
+void cleanupDeck(Deck *deck)
+{
+    free(deck->cards);
+    free(deck->inplay);
 }
