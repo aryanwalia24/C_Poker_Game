@@ -1,4 +1,7 @@
 #include "../include/player.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int createPlayer(int id, const char *name, int startMoney, Player *player)
 {

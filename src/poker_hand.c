@@ -7,7 +7,7 @@ static int checkStraight(const Card cards[], int numCards);
 static void getRankFrequencies(const Card cards[], int numCards, int rankFrequencies[]);
 static int compareRanks(const void *a, const void *b);
 
-void evaluatePokerHand(Card playerCards[], Card communityCards[], PokerHand *optimalHand)
+void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand)
 {
     Card combined[7]; // 2 player cards + 5 community cards
     memcpy(combined, playerCards, 2 * sizeof(Card));
@@ -139,7 +139,7 @@ static int compareRanks(const void *a, const void *b)
     return getCardValue(*(Card *)b) - getCardValue(*(Card *)a);
 }
 
-const char *pokerHandToString(HandRank rank)
+const char *pokerHandToString(int rank)
 {
     switch (rank)
     {
