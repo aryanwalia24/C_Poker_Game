@@ -7,32 +7,40 @@
 static int getValidIntGame(int min, int max, const char *prompt);
 static int getValidBet(int wallet, const char *prompt);
 
-void initializeGame(Player players[], int *playerCount, Deck *deck)
+void initializeGame(Player **players, int *playerCount, Deck *deck)
 {
     srand(time(NULL));
     *playerCount = 2;
+    *players = (Player *)malloc(*playerCount * sizeof(Player));
+    if (*players == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for players.\n");
+        exit(EXIT_FAILURE);
+    }
+
     for (int i = 0; i < *playerCount; i++)
     {
         printf("Enter name for player %d: ", i + 1);
-        if (fgets(players[i].name, MAX_NAME_LENGTH, stdin) != NULL)
+        char name[MAX_NAME_LENGTH];
+        if (fgets(name, MAX_NAME_LENGTH, stdin) != NULL)
         {
-            size_t len = strlen(players[i].name);
-            if (len > 0 && players[i].name[len - 1] == '\n')
+            size_t len = strlen(name);
+            if (len > 0 && name[len - 1] == '\n')
             {
-                players[i].name[len - 1] = '\0';
+                name[len - 1] = '\0';
             }
             int startMoney = getValidIntGame(0, 10000, "Enter initial wallet balance: ");
-            createPlayer(i + 1, players[i].name, startMoney, &players[i]);
+            createPlayer(i + 1, name, startMoney, &(*players)[i]);
 
             char choice;
-            printf("Do you want to generate a PIN for %s? (Y/N): ", players[i].name);
+            printf("Do you want to generate a PIN for %s? (Y/N): ", (*players)[i].name);
             scanf(" %c", &choice);
             while (getchar() != '\n')
                 ;
             if (choice == 'Y' || choice == 'y')
             {
-                players[i].pin = rand() % 9000 + 1000;
-                printf("Player %d's PIN: %d\n", i + 1, players[i].pin);
+                (*players)[i].pin = rand() % 9000 + 1000;
+                printf("Player %d's PIN: %d\n", i + 1, (*players)[i].pin);
 
                 printf("Press Enter to clear the PIN from the console...");
                 while (getchar() != '\n')
@@ -81,7 +89,7 @@ static int getValidBet(int wallet, const char *prompt)
     return bet;
 }
 
-void startGame(Player players[], int *playerCount, Deck *deck)
+void startGame(Player **players, int *playerCount, Deck *deck)
 {
     int continueGame = 1;
 
@@ -91,13 +99,15 @@ void startGame(Player players[], int *playerCount, Deck *deck)
         if (continueGame)
         {
             initializeGame(players, playerCount, deck);
-            playRound(players, *playerCount, deck);
+            playRound(*players, *playerCount, deck);
         }
     }
     printf("\n---------- Game over. Thanks for playing Poker! ----------\n");
+    superCleanup(*players, *playerCount);
+    free(*players);
 }
 
-void playRound(Player players[], int numPlayers, Deck *deck)
+void playRound(Player *players, int numPlayers, Deck *deck)
 {
     printf("\n--------------- Starting A New Round -------------\n");
     printf("Setting Blinds \n\n");
@@ -185,7 +195,7 @@ int displayMenu()
     }
 }
 
-void setBlinds(Player players[], int numPlayers)
+void setBlinds(Player *players, int numPlayers)
 {
     if (numPlayers < 2)
     {
@@ -199,7 +209,7 @@ void setBlinds(Player players[], int numPlayers)
     players[1].wallet -= BIG_BLIND;
 }
 
-void dealCards(Player players[], int numPlayers, Deck *deck)
+void dealCards(Player *players, int numPlayers, Deck *deck)
 {
     if (numPlayers < 1)
     {
@@ -223,7 +233,7 @@ void displayPlayerCards(const Player *player, int display)
         printf("Enter PIN to display %s's cards: ", player->name);
         scanf("%d", &enteredPin);
         while (getchar() != '\n')
-            ; 
+            ;
         if (enteredPin == player->pin)
         {
             printf("Your cards are:\n");
@@ -262,7 +272,7 @@ void displayCommunityCards(const Card communityCards[], int numCards)
     printf("\n");
 }
 
-void executeBettingRound(Player players[], int numPlayers, const Card communityCards[], int *pot)
+void executeBettingRound(Player *players, int numPlayers, const Card communityCards[], int *pot)
 {
     printf("\n------------ Betting Round ------------\n");
     for (int i = 0; i < numPlayers; i++)
@@ -335,7 +345,7 @@ void handleRiver(Deck *deck, Card communityCards[])
     displayCommunityCards(&communityCards[4], 1);
 }
 
-void determineWinner(Player players[], int numPlayers, const Card communityCards[], int *pot)
+void determineWinner(Player *players, int numPlayers, const Card communityCards[], int *pot)
 {
     if (numPlayers < 1)
     {
@@ -343,12 +353,14 @@ void determineWinner(Player players[], int numPlayers, const Card communityCards
         return;
     }
 
-    PokerHand bestHands[numPlayers];
+    PokerHand bestHands[MAX_PLAYERS];
 
     for (int i = 0; i < numPlayers; i++)
     {
+        printf("Evaluating hand for player %d\n", i + 1);
         evaluatePokerHand(players[i].hand, communityCards, &bestHands[i]);
     }
+
     int winnerIndex = 0;
     for (int i = 1; i < numPlayers; i++)
     {
@@ -359,7 +371,7 @@ void determineWinner(Player players[], int numPlayers, const Card communityCards
     }
 
     const char *handType = pokerHandToString(bestHands[winnerIndex].rank);
-    players[winnerIndex].wallet += *pot; 
+    players[winnerIndex].wallet += *pot;
 
     printf("\n------ The Winner is %s with %s and has won $%d! ------\n", players[winnerIndex].name, handType, *pot);
 
@@ -373,4 +385,12 @@ void determineWinner(Player players[], int numPlayers, const Card communityCards
         printf("\n");
     }
     printf("\nRound complete.\n");
+}
+
+void superCleanup(Player *players, int playerCount)
+{
+    for (int i = 0; i < playerCount; i++)
+    {
+        freePlayer(&players[i]);
+    }
 }
