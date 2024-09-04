@@ -121,8 +121,4 @@ void printCard(Card card)
    {
       printf("%s of %s\n", faceStrings[value - 1], suitStrings[suit - 1]);
    }
-   else
-   {
-      printf("Invalid card\n");
-   }
 }
