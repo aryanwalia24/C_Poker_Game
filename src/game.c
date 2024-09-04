@@ -15,7 +15,7 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
     if (*players == NULL)
     {
         fprintf(stderr, "Memory allocation failed for players.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     for (int i = 0; i < *playerCount; i++)
@@ -33,30 +33,33 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
             createPlayer(i + 1, name, startMoney, &(*players)[i]);
 
             char choice;
-            printf("Generate a PIN for %s? (Y/N): ", (*players)[i].name);
-            scanf(" %c", &choice);
-            while (getchar() != '\n')
-                ;
-            if (choice == 'Y' || choice == 'y')
+            do
             {
-                (*players)[i].pin = rand() % 9000 + 1000;
-                printf("Player %d's PIN: %d\n", i + 1, (*players)[i].pin);
-
-                printf("Press Enter to clear the PIN from the console...");
+                printf("Generate a PIN for %s? (Y/N): ", (*players)[i].name);
+                scanf(" %c", &choice);
                 while (getchar() != '\n')
                     ;
-                clearConsole();
-            }
-            else
-            {
-                (*players)[i].pin = rand() % 9000 + 1000; // setting random pin
-                printf("\nPIN not generated for %s. Cannot view cards Afterwards\n", (*players)[i].name);
-            }
+                if (choice == 'Y' || choice == 'y')
+                {
+                    (*players)[i].pin = rand() % 9000 + 1000;
+                    printf("Player %d's PIN: %d\n", i + 1, (*players)[i].pin);
+
+                    printf("Press Enter to clear the PIN from the console...");
+                    while (getchar() != '\n')
+                        ;
+                    clearConsole();
+                }
+                else
+                {
+                    (*players)[i].pin = rand() % 9000 + 1000; // setting random pin
+                    printf("\nPIN not generated for %s. Cannot view cards Afterwards\n", (*players)[i].name);
+                }
+            } while (choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
         }
         else
         {
             fprintf(stderr, "Error reading player name.\n");
-            exit(EXIT_FAILURE);
+            return;
         }
     }
 
@@ -67,34 +70,40 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
 static int getValidIntGame(int min, int max, const char *prompt)
 {
     int value;
+    int result;
     do
     {
         printf("%s", prompt);
-        scanf("%d", &value);
+        result = scanf("%d", &value);
         while (getchar() != '\n')
             ;
-        if (value < min)
+
+        if (result != 1 || value < min || value > max)
         {
-            printf("Minimum value is %d. Please try again.\n", min);
+            printf("Invalid input. Please enter a number between %d and %d.\n", min, max);
         }
-    } while (value < min || value > max);
+    } while (result != 1 || value < min || value > max);
+
     return value;
 }
 
 static int getValidBet(int wallet, const char *prompt)
 {
     int bet;
+    int result;
     do
     {
         printf("%s", prompt);
-        scanf("%d", &bet);
+        result = scanf("%d", &bet);
         while (getchar() != '\n')
             ;
-        if (bet > wallet)
+
+        if (result != 1 || bet < 0 || bet > wallet)
         {
-            printf("Insufficient balance. You have $%d. Enter a smaller bet.\n", wallet);
+            printf("Invalid input. Please enter a bet between 0 and your wallet balance of $%d.\n", wallet);
         }
-    } while (bet < 0 || bet > wallet);
+    } while (result != 1 || bet < 0 || bet > wallet);
+
     return bet;
 }
 
@@ -139,18 +148,26 @@ void playRound(Player *players, int numPlayers, Deck *deck)
     {
         printf("\n%s's turn:\n", players[i].name);
         char choice;
-        printf("Do you want to see your cards? (Y/N): ");
-        scanf(" %c", &choice);
-        while (getchar() != '\n')
-            ;
-        if (choice == 'Y' || choice == 'y')
+        do
         {
-            displayPlayerCards(&players[i], 1);
-            printf("Press Enter to clear the console...");
+            printf("Do you want to see your cards? (Y/N): ");
+            scanf(" %c", &choice);
             while (getchar() != '\n')
                 ;
-            clearConsole();
-        }
+            if (choice == 'Y' || choice == 'y')
+            {
+                displayPlayerCards(&players[i], 1);
+                printf("Press Enter to clear the console...");
+                while (getchar() != '\n')
+                    ;
+                clearConsole();
+            }
+            else if (choice != 'N' && choice != 'n')
+            {
+                printf("Invalid choice. Please enter 'Y' or 'N'.\n");
+            }
+        } while (choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
+
         int bet = getValidBet(players[i].wallet, "Enter bet amount (or 0 to check/fold): ");
         if (bet > 0)
         {
@@ -261,7 +278,8 @@ void displayPlayerCards(const Player *player, int display)
         else
         {
             printf("Invalid PIN. Press Enter to continue .\n");
-            return;
+            while (getchar() != '\n')
+                ;
         }
     }
     else
@@ -287,32 +305,39 @@ void executeBettingRound(Player *players, int numPlayers, const Card communityCa
     {
         printf("\n%s's turn:\n", players[i].name);
         char choice;
-        printf("Do you want to see your cards? (Y/N): ");
-        scanf(" %c", &choice);
-        while (getchar() != '\n')
-            ;
-
-        if (choice == 'Y' || choice == 'y')
+        do
         {
-            displayPlayerCards(&players[i], 1);
-            while (getchar() != '\n')
-                ;
-            clearConsole();
-
-            printf("Do you want to see the community cards? (Y/N): ");
+            printf("Do you want to see your cards? (Y/N): ");
             scanf(" %c", &choice);
             while (getchar() != '\n')
                 ;
 
             if (choice == 'Y' || choice == 'y')
             {
-                displayCommunityCards(communityCards, 5);
-                printf("Press Enter to clear the console...");
+                displayPlayerCards(&players[i], 1);
                 while (getchar() != '\n')
                     ;
                 clearConsole();
+
+                printf("Do you want to see the community cards? (Y/N): ");
+                scanf(" %c", &choice);
+                while (getchar() != '\n')
+                    ;
+
+                if (choice == 'Y' || choice == 'y')
+                {
+                    displayCommunityCards(communityCards, 5);
+                    printf("Press Enter to clear the console...");
+                    while (getchar() != '\n')
+                        ;
+                    clearConsole();
+                }
             }
-        }
+            else if (choice != 'N' && choice != 'n')
+            {
+                printf("Invalid choice. Please enter 'Y' or 'N'.\n");
+            }
+        } while (choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
 
         int bet = getValidBet(players[i].wallet, "Enter bet amount (or 0 to check/fold): ");
         if (bet > 0)

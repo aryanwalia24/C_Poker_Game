@@ -28,7 +28,5 @@ PokerHand *createPokerHand();
 void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand);
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2);
 const char *pokerHandToString(int rank);
-// void freePokerHand(PokerHand *hand);
-// void cleanupPokerHands(PokerHand *hands, int numHands);
 
 #endif // POKER_HAND_H

@@ -5,12 +5,24 @@
 
 void initialiseDeck(Deck *deck)
 {
-    deck->cards = (Card *)malloc(NUM_CARDS * sizeof(Card));
-    deck->inplay = (int *)malloc(NUM_CARDS * sizeof(int));
-    if (deck->cards == NULL || deck->inplay == NULL)
+    while (1)
     {
-        fprintf(stderr, "Memory allocation failed for deck.\n");
-        exit(EXIT_FAILURE);
+        deck->cards = (Card *)malloc(NUM_CARDS * sizeof(Card));
+        deck->inplay = (int *)malloc(NUM_CARDS * sizeof(int));
+        if (deck->cards == NULL || deck->inplay == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed for deck. Try again? (y/n): ");
+            char response;
+            scanf(" %c", &response);
+            if (response == 'n' || response == 'N')
+            {
+                return;
+            }
+        }
+        else
+        {
+            break;
+        }
     }
 
     int idx = 0;
@@ -42,6 +54,11 @@ void shuffleDeck(Deck *deck)
 
 Card drawCard(Deck *deck)
 {
+    if (deck->cards == NULL)
+    {
+        printf("Deck is not initialized. Please initialize the deck first.\n");
+        return 0;
+    }
     if (deck->top >= NUM_CARDS)
     {
         printf("All cards have been drawn.\n");
@@ -57,6 +74,12 @@ Card drawCard(Deck *deck)
 
 void cleanupDeck(Deck *deck)
 {
-    free(deck->cards);
-    free(deck->inplay);
+    if (deck->cards != NULL)
+    {
+        free(deck->cards);
+    }
+    if (deck->inplay != NULL)
+    {
+        free(deck->inplay);
+    }
 }

@@ -158,12 +158,18 @@ void clearConsole()
 int getValidInt(int min, int max, const char *prompt)
 {
     int value;
+    int result;
     do
     {
-        printf(prompt, max);
-        scanf("%d", &value);
+        printf("%s", prompt);
+        result = scanf("%d", &value);
         while (getchar() != '\n')
             ;
-    } while (value < min || value > max);
+        if (result != 1 || value < min || value > max)
+        {
+            printf("Invalid input. Please enter a number between %d and %d.\n", min, max);
+        }
+    } while (result != 1 || value < min || value > max);
+
     return value;
 }
