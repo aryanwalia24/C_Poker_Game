@@ -126,6 +126,6 @@ C_POKER_GAME/
 
 # Gameplay
 
-https://github.com/user-attachments/assets/c30c39bc-59b7-4cfa-b7d4-3ea68041d426
+https://github.com/user-attachments/assets/a8e8101b-6f32-4ed7-9279-851d66a43599
 
 ---
