@@ -1,6 +1,6 @@
-# 🃏 Texas Hold'em Poker in C
+# 🃏 Texas Hold'em Poker in C 
 
-Image Area
+![image](https://github.com/user-attachments/assets/52fac160-155e-44e9-b86a-6ca8e4d28ce1)
 
 ---
 
@@ -16,7 +16,7 @@ Image Area
 
 ## 📜 Project Overview
 
-I created a **🎲 [`Texas Hold'em Poker Game`](#-project-overview)** using C to demonstrate my programming skills and understanding of game development. This project integrates various programming concepts, including bitwise operations, modular code design, and game mechanics, resulting in a fully functional poker game.
+I created a **🎲 `Texas Hold'em Poker Game`** using C to demonstrate my programming skills and understanding of game development. This project integrates various programming concepts, including bitwise operations, modular code design, and game mechanics, resulting in a fully functional poker game.
 
 ### 🔍 Focus Areas:
 
@@ -40,7 +40,7 @@ I opted to implement a game rather than a purely conceptual project to put into 
 * **🛠️ Player Management** : Implement robust player actions, including betting and wallet management.
 * **📜 Game Logic** : Develop the core mechanics for dealing cards and conducting betting rounds.
 * **🏅 Hand Evaluation** : Create algorithms to accurately determine the winning hand.
-* **📚 Static Library** : Compile core functionalities into a reusable `lib.a` static library.
+* **📚 Static Library** : Compile core functionalities into a reusable `libpoker.a` static library.
 
 ---
 
@@ -60,8 +60,8 @@ C_POKER_GAME/
 │   ├── game.c
 │   ├── player.c
 │   └── poker_hand.c
-├── headerLibrary/
-│   └── libpoker.a
+├── libpoker.a
+├── commands.txt
 ├── main.c
 ├── .gitignore
 ├── run_project.sh
@@ -89,11 +89,18 @@ C_POKER_GAME/
 
 ### Compilation
 
+#### For Unix based Systems 
 1. To compile the project, use the provided run_project.sh script:
     ```
     ./run_project.sh
     ```
  **_-> Check run_project.sh file for all background commands_**
+ 
+#### For Windows
+1. To compile the project, either use commands in `commands.txt` or
+    ```
+    gcc -I./include main.c -L. -lpoker -o poker_game
+    ```
 ### Running the Program
 
 1. After successful compilation, you can run the program using:
@@ -115,3 +122,7 @@ C_POKER_GAME/
   * **River** : The fifth and final community card.
 * **🏆 Objective** : Create the highest-ranking hand using a combination of hole cards and community cards.
 * **🥇 Winning** : The player with the best hand at the end of the betting rounds wins the pot.
+---
+
+# Gameplay
+video area
