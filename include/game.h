@@ -28,4 +28,6 @@ void displayPlayerCards(const Player *player, int display);
 void displayCommunityCards(const Card communityCards[], int numCards);
 void superCleanup(Player *players, int playerCount);
 
+void burnCard(Deck *deck);
+
 #endif // GAME_H
