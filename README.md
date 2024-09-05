@@ -11,6 +11,7 @@
 3. [Goals](#-goals)
 4. [Structure and Design](#-structure-and-design)
 5. [Texas Hold&#39;em Summary](#️-texas-holdem-summary)
+6. [Gameplay](#-gameplay)
 
 ---
 
@@ -60,6 +61,12 @@ C_POKER_GAME/
 │   ├── game.c
 │   ├── player.c
 │   └── poker_hand.c
+├── testfiles/
+│   ├── testcard.c
+│   ├── testdeck.c
+│   ├── testgame.c
+│   ├── testplayer.c
+│   └── testpoker_hand.c
 ├── libpoker.a
 ├── commands.txt
 ├── main.c
