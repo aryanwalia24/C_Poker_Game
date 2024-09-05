@@ -125,4 +125,7 @@ C_POKER_GAME/
 ---
 
 # Gameplay
-video area
+
+https://github.com/user-attachments/assets/c30c39bc-59b7-4cfa-b7d4-3ea68041d426
+
+---
