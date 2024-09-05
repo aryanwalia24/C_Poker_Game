@@ -20,15 +20,15 @@ PokerHand *createPokerHand()
 
 void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand)
 {
-    Card combined[7]; // 2 player cards + 5 community cards
-
+    Card *combined = (Card *)calloc(7, sizeof(Card)); // 2 player cards + 5 community cards
+    
     memcpy(combined, playerCards, 2 * sizeof(Card));
     memcpy(combined + 2, communityCards, 5 * sizeof(Card));
 
     // Sorting cards by rank
     qsort(combined, 7, sizeof(Card), compareRanks);
 
-    int rankFrequencies[13] = {0};
+    int *rankFrequencies = (int *)calloc(13, sizeof(int));
     int flush = checkFlush(combined, 7);
     int straight = checkStraight(combined, 7);
     int fourCount = 0, threeCount = 0, pairCount = 0;
@@ -83,6 +83,8 @@ void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHan
     }
 
     memcpy(optimalHand->cards, combined, MAX_CARDS * sizeof(Card));
+    free(combined);
+    free(rankFrequencies);
 }
 
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2)
@@ -106,7 +108,7 @@ int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2)
 
 static int checkFlush(const Card cards[], int numCards)
 {
-    int suits[4] = {0}; // Hearts, Diamonds, Clubs, Spades
+    int *suits = (int *)calloc(4, sizeof(int)); // Hearts, Diamonds, Clubs, Spades
     for (int i = 0; i < numCards; i++)
     {
         suits[getCardSuit(cards[i])]++;
@@ -118,6 +120,7 @@ static int checkFlush(const Card cards[], int numCards)
             return 1;
         }
     }
+    free(suits);
     return 0;
 }
 

@@ -27,7 +27,7 @@ int createPlayer(int id, const char *name, int startMoney, Player *player)
     }
 
     player->id = id;
-    player->name = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
+    player->name = (char *)calloc(MAX_NAME_LENGTH , sizeof(char));
     if (player->name == NULL)
     {
         fprintf(stderr, "Memory allocation failed for player name.\n");
@@ -39,7 +39,7 @@ int createPlayer(int id, const char *name, int startMoney, Player *player)
     player->wallet = startMoney;
     player->pin = 0;
 
-    player->hand = (Card *)malloc(HAND_SIZE * sizeof(Card));
+    player->hand = (Card *)calloc(HAND_SIZE, sizeof(Card));
     if (player->hand == NULL)
     {
         fprintf(stderr, "Memory allocation failed for player hand.\n");

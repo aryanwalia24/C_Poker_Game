@@ -126,6 +126,8 @@ unsigned int getCardSuit(Card card)
 
 void printCard(Card card)
 {
+   // static const char *faces[] = {
+   //     "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
    static const char *faceStrings[] = {
        "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
    static const char *suitStrings[] = {
@@ -138,9 +140,5 @@ void printCard(Card card)
    if (value > 0 && value <= 13 && suit >= 0 && suit <= 3)
    {
       printf("%s of %s\n", faceStrings[value - 1], suitStrings[suit]);
-   }
-   else
-   {
-      printf("Invalid card.\n");
    }
 }

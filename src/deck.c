@@ -5,23 +5,19 @@
 
 void initialiseDeck(Deck *deck)
 {
-    while (1)
+
+    deck->cards = (Card *)calloc(NUM_CARDS, sizeof(Card));
+    deck->inplay = (int *)calloc(NUM_CARDS, sizeof(int));
+    if (deck->cards == NULL || deck->inplay == NULL)
     {
-        deck->cards = (Card *)malloc(NUM_CARDS * sizeof(Card));
-        deck->inplay = (int *)malloc(NUM_CARDS * sizeof(int));
-        if (deck->cards == NULL || deck->inplay == NULL)
+        fprintf(stderr, "Memory allocation failed for deck. Trying again...\n");
+        if (deck->cards != NULL)
         {
-            fprintf(stderr, "Memory allocation failed for deck. Try again? (y/n): ");
-            char response;
-            scanf(" %c", &response);
-            if (response == 'n' || response == 'N')
-            {
-                return;
-            }
+            free(deck->cards);
         }
-        else
+        if (deck->inplay != NULL)
         {
-            break;
+            free(deck->inplay);
         }
     }
 

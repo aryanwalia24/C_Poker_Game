@@ -120,9 +120,9 @@ void startGame(Player **players, int *playerCount, Deck *deck)
             playRound(*players, *playerCount, deck);
         }
     }
-    printf("\n---------- Game over. Thanks for playing Poker! ----------\n\n");
-    superCleanup(*players, *playerCount);
-    free(*players);
+    printf("\n--------- Game over. Thanks for playing Poker! ----------\n\n");
+    superCleanup(*players, *playerCount); // all players
+    free(*players);                       // player array
 }
 
 void playRound(Player *players, int numPlayers, Deck *deck)
@@ -136,8 +136,8 @@ void playRound(Player *players, int numPlayers, Deck *deck)
     printf("\n-------------- Dealing Cards to Players ------------\n\n");
     dealCards(players, numPlayers, deck);
 
-    Card *communityCards = (Card *)malloc(5 * sizeof(Card));
-    for (int i = 0; i < 5; i++)
+    Card *communityCards = (Card *)calloc(5, sizeof(Card));
+    for (int i = 0; i < 3; i++)
     {
         communityCards[i] = (Card)drawCard(deck);
     }
@@ -168,30 +168,30 @@ void playRound(Player *players, int numPlayers, Deck *deck)
             }
         } while (choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
 
-        int bet = getValidBet(players[i].wallet, "Enter bet amount (or 0 to check/fold): ");
+        int bet = getValidBet(players[i].wallet, "\nEnter bet amount (or 0 to check/fold): ");
         if (bet > 0)
         {
             players[i].wallet -= bet;
             pot += bet;
-            printf("%s bets $%d.\n", players[i].name, bet);
+            printf("%s bets $%d.\n\n", players[i].name, bet);
         }
         else
         {
-            printf("%s checks/folds.\n", players[i].name);
+            printf("%s checks/folds.\n\n", players[i].name);
         }
     }
 
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
-    printf("\n-------------- Revealing The FLOP --------------\n");
+    printf("\n------------ Revealing The FLOP --------------\n");
     handleFlop(deck, communityCards);
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
-    printf("\n-------------- Revealing The TURN --------------\n");
+    printf("\n------------- Revealing The TURN --------------\n");
     handleTurn(deck, communityCards);
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
-    printf("\n-------------- Revealing The RIVER --------------\n");
+    printf("\n------------- Revealing The RIVER --------------\n");
     handleRiver(deck, communityCards);
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
@@ -250,6 +250,10 @@ void dealCards(Player *players, int numPlayers, Deck *deck)
     printf("Dealing cards...\n");
     for (int i = 0; i < numPlayers; i++)
     {
+        if (players[i].hand == NULL)
+        {
+            players[i].hand = (Card *)calloc(HAND_SIZE, sizeof(Card));
+        }
         players[i].hand[0] = drawCard(deck);
         players[i].hand[1] = drawCard(deck);
     }
@@ -290,7 +294,7 @@ void displayPlayerCards(const Player *player, int display)
 
 void displayCommunityCards(const Card communityCards[], int numCards)
 {
-    printf("Community Cards: \n");
+    printf("\nCommunity Cards: \n");
     for (int i = 0; i < numCards; i++)
     {
         printCard(communityCards[i]);
@@ -300,7 +304,7 @@ void displayCommunityCards(const Card communityCards[], int numCards)
 
 void executeBettingRound(Player *players, int numPlayers, const Card communityCards[], int *pot)
 {
-    printf("\n-------------- Betting Round --------------\n");
+    printf("\n---------------- Betting Round ----------------\n");
     for (int i = 0; i < numPlayers; i++)
     {
         printf("\n%s's turn:\n", players[i].name);
@@ -327,7 +331,7 @@ void executeBettingRound(Player *players, int numPlayers, const Card communityCa
                 if (choice == 'Y' || choice == 'y')
                 {
                     displayCommunityCards(communityCards, 5);
-                    printf("Press Enter to clear the console...");
+                    printf("\nPress Enter to clear the console...");
                     while (getchar() != '\n')
                         ;
                     clearConsole();
@@ -358,26 +362,37 @@ void executeBettingRound(Player *players, int numPlayers, const Card communityCa
     }
 }
 
+void burnCard(Deck *deck)
+{
+    printf("\nBurning a card...\n");
+    drawCard(deck);
+}
+
 void handleFlop(Deck *deck, Card communityCards[])
 {
+    burnCard(deck);
     printf("\n");
-    for (int i = 0; i < 3; i++)
-    {
-        communityCards[i];
-    }
     displayCommunityCards(communityCards, 3);
 }
 
 void handleTurn(Deck *deck, Card communityCards[])
 {
+    burnCard(deck);
+    communityCards[3] = (Card)drawCard(deck);
+    printf("\nTurn card: ");
+    printCard(communityCards[3]);
     printf("\n");
-    displayCommunityCards(&communityCards[3], 1);
+    displayCommunityCards(communityCards, 4);
 }
 
 void handleRiver(Deck *deck, Card communityCards[])
 {
+    burnCard(deck);
+    communityCards[4] = (Card)drawCard(deck);
+    printf("\nRiver card: ");
+    printCard(communityCards[4]);
     printf("\n");
-    displayCommunityCards(&communityCards[4], 1);
+    displayCommunityCards(communityCards, 5);
 }
 
 void determineWinner(Player *players, int numPlayers, const Card communityCards[], int *pot)
@@ -388,9 +403,9 @@ void determineWinner(Player *players, int numPlayers, const Card communityCards[
         return;
     }
 
-    PokerHand bestHands[MAX_PLAYERS];
+    PokerHand *bestHands = (PokerHand *)calloc(2, sizeof(PokerHand));
 
-    printf("\n\n-------------- Evaluating Hands --------------\n");
+    printf("\n\n------------- Evaluating Hands -------------\n");
     for (int i = 0; i < numPlayers; i++)
     {
         printf("\nEvaluating hand for player %d\n", i + 1);
@@ -420,7 +435,8 @@ void determineWinner(Player *players, int numPlayers, const Card communityCards[
         printCard(players[i].hand[1]);
         printf("\n");
     }
-    printf("Round complete.\n");
+    printf("<-------------- Round Over ------------->\n");
+    free(bestHands);
 }
 
 void superCleanup(Player *players, int playerCount)
