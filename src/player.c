@@ -137,13 +137,16 @@ void displayPlayerCardsSimple(const Player *player)
 
 void freePlayer(Player *player)
 {
-    if (player == NULL)
+    if (player->name != NULL)
     {
-        return;
+        free(player->name);
+        player->name = NULL;
     }
-
-    free(player->name);
-    free(player->hand);
+    if (player->hand != NULL)
+    {
+        free(player->hand);
+        player->hand = NULL;
+    }
 }
 
 void clearConsole()

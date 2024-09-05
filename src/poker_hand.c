@@ -117,6 +117,7 @@ static int checkFlush(const Card cards[], int numCards)
     {
         if (suits[i] >= 5)
         {
+            free(suits);
             return 1;
         }
     }

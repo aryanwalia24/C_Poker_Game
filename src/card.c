@@ -126,12 +126,10 @@ unsigned int getCardSuit(Card card)
 
 void printCard(Card card)
 {
-   // static const char *faces[] = {
-   //     "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
    static const char *faceStrings[] = {
        "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
    static const char *suitStrings[] = {
-       "Hearts", "Spades", "Clubs", "Diamonds"};
+       "Hearts", "Diamonds", "Clubs", "Spades"};
 
    unsigned int value = getCardValue(card);
    unsigned int suit = getCardSuit(card);

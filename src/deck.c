@@ -3,9 +3,13 @@
 #include <time.h>
 #include "../include/deck.h"
 
+#define VALUE_BITS 4
+#define VALUE_MASK 0xF
+#define SUIT_BITS 2
+#define SUIT_MASK 0x30
+
 void initialiseDeck(Deck *deck)
 {
-
     deck->cards = (Card *)calloc(NUM_CARDS, sizeof(Card));
     deck->inplay = (int *)calloc(NUM_CARDS, sizeof(int));
     if (deck->cards == NULL || deck->inplay == NULL)
@@ -19,6 +23,7 @@ void initialiseDeck(Deck *deck)
         {
             free(deck->inplay);
         }
+        return;
     }
 
     int idx = 0;
@@ -26,7 +31,7 @@ void initialiseDeck(Deck *deck)
     {
         for (unsigned int val = 1; val <= 13; val++)
         {
-            deck->cards[idx] = (suit << VALUE_BITS) | val;
+            deck->cards[idx] = ((suit << VALUE_BITS) & SUIT_MASK) | (val & VALUE_MASK);
             deck->inplay[idx] = 0;
             idx++;
         }
