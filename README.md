@@ -11,7 +11,7 @@
 3. [Goals](#-goals)
 4. [Structure and Design](#-structure-and-design)
 5. [Texas Hold&#39;em Summary](#️-texas-holdem-summary)
-6. [Gameplay](#-gameplay)
+6. [Gameplay](#gameplay)
 
 ---
 
