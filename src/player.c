@@ -5,35 +5,16 @@
 
 int createPlayer(int id, const char *name, int startMoney, Player *player)
 {
-    if (id < 0)
-    {
-        fprintf(stderr, "Error: Player ID must be a non-negative integer.\n");
-        return -1;
-    }
+    player->id = id;
+    player->name = (char *)calloc(MAX_NAME_LENGTH, sizeof(char));
     if (name == NULL || strlen(name) == 0)
     {
-        fprintf(stderr, "Error: Player name cannot be null or empty.\n");
-        return -1;
+        strncpy(player->name, "Guest", MAX_NAME_LENGTH - 1);
     }
-    if (startMoney < 0)
+    else
     {
-        fprintf(stderr, "Error: Start money cannot be negative.\n");
-        return -1;
+        strncpy(player->name, name, MAX_NAME_LENGTH - 1);
     }
-    if (player == NULL)
-    {
-        fprintf(stderr, "Error: Player pointer is null.\n");
-        return -1;
-    }
-
-    player->id = id;
-    player->name = (char *)calloc(MAX_NAME_LENGTH , sizeof(char));
-    if (player->name == NULL)
-    {
-        fprintf(stderr, "Memory allocation failed for player name.\n");
-        return -1;
-    }
-    strncpy(player->name, name, MAX_NAME_LENGTH - 1);
     player->name[MAX_NAME_LENGTH - 1] = '\0';
 
     player->wallet = startMoney;

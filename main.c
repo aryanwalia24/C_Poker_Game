@@ -5,7 +5,7 @@
 int main()
 {
     Player *players = NULL;
-    int numPlayers = 0;
+    int numPlayers = 2;
     Deck deck;
 
     startGame(&players, &numPlayers, &deck);
