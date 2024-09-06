@@ -2,38 +2,46 @@
 #include <stdlib.h>
 #include <string.h>
 
+// test global vars
 PokerHand *hands = NULL;
 int numHands = 0;
 
+// static to be used within this file only
 static int checkFlush(const Card cards[], int numCards);
 static int checkStraight(const Card cards[], int numCards);
 static void getRankFrequencies(const Card cards[], int numCards, int rankFrequencies[]);
 static int compareRanks(const void *a, const void *b);
 
+// Initialize PokerHand for each Player
 PokerHand *createPokerHand()
 {
     static PokerHand hand;
     hand.rank = HIGH_CARD;
-    memset(hand.cards, 0, MAX_CARDS * sizeof(Card));
+    memset(hand.cards, 0, MAX_CARDS * sizeof(Card)); // setting all cards to 0
     return &hand;
 }
 
 void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand)
 {
     Card *combined = (Card *)calloc(7, sizeof(Card)); // 2 player cards + 5 community cards
-    
+
     memcpy(combined, playerCards, 2 * sizeof(Card));
     memcpy(combined + 2, communityCards, 5 * sizeof(Card));
 
     // Sorting cards by rank
     qsort(combined, 7, sizeof(Card), compareRanks);
 
+    // rank array to store frequency of each rank
     int *rankFrequencies = (int *)calloc(13, sizeof(int));
+
+    // Check Modes
     int flush = checkFlush(combined, 7);
     int straight = checkStraight(combined, 7);
     int fourCount = 0, threeCount = 0, pairCount = 0;
 
     getRankFrequencies(combined, 7, rankFrequencies);
+
+    // Check for pairs, three of a kind, four of a kind
     for (int i = 0; i < 13; i++)
     {
         if (rankFrequencies[i] == 4)
@@ -83,18 +91,21 @@ void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHan
     }
 
     memcpy(optimalHand->cards, combined, MAX_CARDS * sizeof(Card));
+
+    // memory cleanup for this function
     free(combined);
     free(rankFrequencies);
 }
 
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2)
 {
+    // Compare ranks
     if (hand1->rank > hand2->rank)
         return 1;
     if (hand1->rank < hand2->rank)
         return -1;
 
-    // Same rank, compare values
+    // If Same rank, compare values
     for (int i = 0; i < MAX_CARDS; i++)
     {
         if (getCardValue(hand1->cards[i]) > getCardValue(hand2->cards[i]))
@@ -115,18 +126,19 @@ static int checkFlush(const Card cards[], int numCards)
     }
     for (int i = 0; i < 4; i++)
     {
-        if (suits[i] >= 5)
+        if (suits[i] >= 5) // conditonal check for flush
         {
             free(suits);
             return 1;
         }
     }
-    free(suits);
+    free(suits); // cleanup
     return 0;
 }
 
 static int checkStraight(const Card cards[], int numCards)
 {
+    // Check for consecutive cards
     int seqCount = 1;
     for (int i = 1; i < numCards; i++)
     {
@@ -146,17 +158,20 @@ static int checkStraight(const Card cards[], int numCards)
 
 static void getRankFrequencies(const Card cards[], int numCards, int rankFrequencies[])
 {
+    // updating the frequency of each rank card
     for (int i = 0; i < numCards; i++)
     {
         rankFrequencies[getCardValue(cards[i]) - 1]++;
     }
 }
 
+// Generic pointer for sorting comparator (using ranks)
 static int compareRanks(const void *a, const void *b)
 {
     return getCardValue(*(Card *)b) - getCardValue(*(Card *)a);
 }
 
+// For Displaying Poker Hand Rank
 const char *pokerHandToString(int rank)
 {
     switch (rank)

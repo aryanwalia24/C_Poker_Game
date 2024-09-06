@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Input Validation Functions
 static int getValidIntGame(int min, int max, const char *prompt);
 static int getValidBet(int wallet, const char *prompt);
 
 void initializeGame(Player **players, int *playerCount, Deck *deck)
 {
-    srand(time(NULL));
+    srand(time(NULL)); // seeding random number generator
     *playerCount = 2;
     *players = (Player *)malloc(*playerCount * sizeof(Player));
     if (*players == NULL)
@@ -18,6 +19,7 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
         return;
     }
 
+    // Actual Game Starts here
     for (int i = 0; i < *playerCount; i++)
     {
         printf("Enter name for player %d: ", i + 1);
@@ -30,8 +32,11 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
                 name[len - 1] = '\0';
             }
             int startMoney = getValidIntGame(20, 10000, "Enter initial wallet balance: ");
+
+            // creating player with name, startMoney and player pointer
             createPlayer(i + 1, name, startMoney, &(*players)[i]);
 
+            // Pin generation
             char choice;
             do
             {
@@ -63,10 +68,12 @@ void initializeGame(Player **players, int *playerCount, Deck *deck)
         }
     }
 
+    // Deck Initialization
     initialiseDeck(deck);
     shuffleDeck(deck);
 }
 
+// For Numeric Input
 static int getValidIntGame(int min, int max, const char *prompt)
 {
     int value;
@@ -107,6 +114,7 @@ static int getValidBet(int wallet, const char *prompt)
     return bet;
 }
 
+// Game Loop Function
 void startGame(Player **players, int *playerCount, Deck *deck)
 {
     int continueGame = 1;
@@ -125,6 +133,7 @@ void startGame(Player **players, int *playerCount, Deck *deck)
     free(*players);                       // player array
 }
 
+// Console Output Functions
 void playRound(Player *players, int numPlayers, Deck *deck)
 {
     printf("\n--------------- Starting A New Round -------------\n\n");
@@ -136,15 +145,19 @@ void playRound(Player *players, int numPlayers, Deck *deck)
     printf("\n-------------- Dealing Cards to Players ------------\n\n");
     dealCards(players, numPlayers, deck);
 
+    // The Community Cards for the round
     Card *communityCards = (Card *)calloc(5, sizeof(Card));
     for (int i = 0; i < 3; i++)
     {
         communityCards[i] = (Card)drawCard(deck);
     }
+
+    // Pot Money for the round
     int pot = INITIAL_POT;
     printf("\n-----  Initial pot amount: $%d -----\n", pot);
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
+    // Game Modes
     printf("\n------------ Revealing The FLOP --------------\n");
     handleFlop(deck, communityCards);
     executeBettingRound(players, numPlayers, communityCards, &pot);
@@ -157,6 +170,7 @@ void playRound(Player *players, int numPlayers, Deck *deck)
     handleRiver(deck, communityCards);
     executeBettingRound(players, numPlayers, communityCards, &pot);
 
+    // get the winner
     determineWinner(players, numPlayers, communityCards, &pot);
 }
 
@@ -187,6 +201,7 @@ int displayMenu()
     }
 }
 
+// Game Logic Functions
 void setBlinds(Player *players, int numPlayers)
 {
     if (numPlayers < 2)
@@ -212,6 +227,7 @@ void dealCards(Player *players, int numPlayers, Deck *deck)
     printf("Dealing cards...\n");
     for (int i = 0; i < numPlayers; i++)
     {
+        // if not intialised correctly
         if (players[i].hand == NULL)
         {
             players[i].hand = (Card *)calloc(HAND_SIZE, sizeof(Card));
@@ -237,9 +253,10 @@ void displayPlayerCards(const Player *player, int display)
             printCard(player->hand[1]);
             printf("\n");
             printf("Press Enter to clear the console...");
+            // clearing the Input Buffer
             while (getchar() != '\n')
                 ;
-            clearConsole();
+            clearConsole(); // clearing the console
         }
         else
         {
@@ -264,6 +281,7 @@ void displayCommunityCards(const Card communityCards[], int numCards)
     printf("\n");
 }
 
+// Bet , Raise or Call Funtionality
 void executeBettingRound(Player *players, int numPlayers, const Card communityCards[], int *pot)
 {
     printf("\n---------------- Betting Round ----------------\n");
@@ -312,28 +330,28 @@ void executeBettingRound(Player *players, int numPlayers, const Card communityCa
 
         if (bet > 0)
         {
-            if (bet < currentBet)
+            if (bet < currentBet) // Match The Current Bet
             {
                 printf("Invalid bet amount. Must be at least the current bet of $%d.\n", currentBet);
                 i--;
             }
             else
             {
-                if (bet > currentBet)
+                if (bet > currentBet) // raising the bet
                 {
                     printf("%s raises to $%d.\n", players[i].name, bet);
                     currentBet = bet;
                 }
-                else
+                else // calling the bet
                 {
                     printf("%s calls $%d.\n", players[i].name, bet);
                 }
 
                 players[i].wallet -= bet;
-                *pot += bet;
+                *pot += bet; // update the round's pot
             }
         }
-        else if (bet == 0)
+        else if (bet == 0) // Player Folds
         {
             printf("%s folds.\n", players[i].name);
         }
@@ -345,12 +363,16 @@ void executeBettingRound(Player *players, int numPlayers, const Card communityCa
     }
 }
 
+// Burn Card Function - (Removig the card from deck)
 void burnCard(Deck *deck)
 {
     printf("\nBurning a card...\n");
     drawCard(deck);
 }
 
+/* Modes of the Game */
+
+// 1. Flop - (Reveals 3 community Cards after burning a card)
 void handleFlop(Deck *deck, Card communityCards[])
 {
     burnCard(deck);
@@ -358,6 +380,7 @@ void handleFlop(Deck *deck, Card communityCards[])
     displayCommunityCards(communityCards, 3);
 }
 
+// 2. Turn - (Reveals 1 community Card after burning a card)
 void handleTurn(Deck *deck, Card communityCards[])
 {
     burnCard(deck);
@@ -367,6 +390,7 @@ void handleTurn(Deck *deck, Card communityCards[])
     displayCommunityCards(communityCards, 4);
 }
 
+// 3. River - (Reveals 1 community Card after burning a card)
 void handleRiver(Deck *deck, Card communityCards[])
 {
     burnCard(deck);
@@ -378,12 +402,14 @@ void handleRiver(Deck *deck, Card communityCards[])
 
 void determineWinner(Player *players, int numPlayers, const Card communityCards[], int *pot)
 {
+    // debug message
     if (numPlayers < 1)
     {
         printf("No players to determine a winner.\n");
         return;
     }
 
+    // Evaluating Hands for each player
     PokerHand *bestHands = (PokerHand *)calloc(2, sizeof(PokerHand));
 
     printf("\n\n--------------- Evaluating Hands ---------------\n");
@@ -402,6 +428,7 @@ void determineWinner(Player *players, int numPlayers, const Card communityCards[
         }
     }
 
+    // Won the Game but by what ??? - Hand Type
     const char *handType = pokerHandToString(bestHands[winnerIndex].rank);
     players[winnerIndex].wallet += *pot;
 
@@ -420,6 +447,7 @@ void determineWinner(Player *players, int numPlayers, const Card communityCards[
     free(bestHands);
 }
 
+// Memory Cleanup
 void superCleanup(Player *players, int playerCount)
 {
     for (int i = 0; i < playerCount; i++)

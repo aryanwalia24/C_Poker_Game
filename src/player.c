@@ -6,6 +6,8 @@
 int createPlayer(int id, const char *name, int startMoney, Player *player)
 {
     player->id = id;
+
+    // Allocating memory for player name ("Guest" if no input)
     player->name = (char *)calloc(MAX_NAME_LENGTH, sizeof(char));
     if (name == NULL || strlen(name) == 0)
     {
@@ -20,6 +22,7 @@ int createPlayer(int id, const char *name, int startMoney, Player *player)
     player->wallet = startMoney;
     player->pin = 0;
 
+    // Hand size is 2 for Texas Hold'em variant of poker
     player->hand = (Card *)calloc(HAND_SIZE, sizeof(Card));
     if (player->hand == NULL)
     {
@@ -33,6 +36,7 @@ int createPlayer(int id, const char *name, int startMoney, Player *player)
 
 int updateWallet(Player *player, int amount)
 {
+    // debugging (although never used)
     if (player == NULL)
     {
         fprintf(stderr, "Error: Player pointer is null.\n");
@@ -45,7 +49,7 @@ int updateWallet(Player *player, int amount)
         return -1;
     }
 
-    player->wallet += amount;
+    player->wallet += amount; // -ve and +ve both handled
     return 0;
 }
 
@@ -56,7 +60,7 @@ int getWallet(const Player *player, int *balance)
         fprintf(stderr, "Error: Player or balance pointer is null.\n");
         return -1;
     }
-
+    // setting variable with balance from player wallet
     *balance = player->wallet;
     return 0;
 }
@@ -81,7 +85,7 @@ void setPlayerPin(Player *player)
         fprintf(stderr, "Error: Player pointer is null.\n");
         return;
     }
-
+    // Random 4-digit pin using rand() function
     printf("Set a PIN for %s: ", player->name);
     player->pin = getValidInt(1000, 9999, "Enter PIN: ");
 }
@@ -94,12 +98,14 @@ int validatePlayerPin(const Player *player)
         return 0;
     }
 
+    // Pin validation
     int enteredPin;
     printf("Enter PIN to view your cards: ");
     enteredPin = getValidInt(1000, 9999, "Enter PIN: ");
     return enteredPin == player->pin;
 }
 
+// Player's Hand
 void displayPlayerCardsSimple(const Player *player)
 {
     if (player == NULL)
@@ -116,6 +122,7 @@ void displayPlayerCardsSimple(const Player *player)
     printf("\n");
 }
 
+// Memory Cleanup
 void freePlayer(Player *player)
 {
     if (player->name != NULL)
@@ -130,6 +137,7 @@ void freePlayer(Player *player)
     }
 }
 
+// Clear console after Pin Generation & Card Display
 void clearConsole()
 {
 #ifdef _WIN32
@@ -139,6 +147,7 @@ void clearConsole()
 #endif
 }
 
+// Valid Input Function
 int getValidInt(int min, int max, const char *prompt)
 {
     int value;

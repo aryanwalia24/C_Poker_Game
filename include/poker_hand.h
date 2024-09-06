@@ -2,9 +2,9 @@
 #define POKER_HAND_H
 
 #include "card.h"
+#define MAX_CARDS 5 // best 5 for evaluation
 
-#define MAX_CARDS 5
-
+// Rank of the poker hand
 typedef enum
 {
     HIGH_CARD,
@@ -24,6 +24,7 @@ typedef struct
     Card cards[MAX_CARDS];
 } PokerHand;
 
+// Hand evaluation functions
 PokerHand *createPokerHand();
 void evaluatePokerHand(Card playerCards[], const Card communityCards[], PokerHand *optimalHand);
 int comparePokerHands(const PokerHand *hand1, const PokerHand *hand2);

@@ -10,6 +10,7 @@
 
 void initialiseDeck(Deck *deck)
 {
+    // initialising array of size 52 (cards) , calloc for setting intial bits to 0
     deck->cards = (Card *)calloc(NUM_CARDS, sizeof(Card));
     deck->inplay = (int *)calloc(NUM_CARDS, sizeof(int));
     if (deck->cards == NULL || deck->inplay == NULL)
@@ -26,6 +27,7 @@ void initialiseDeck(Deck *deck)
         return;
     }
 
+    // Setting card values & suits in deck (Values 0-12 => 1-13 ,Suit 0-3 => 1-4)
     int idx = 0;
     for (unsigned int suit = 0; suit < 4; suit++)
     {
@@ -66,6 +68,7 @@ Card drawCard(Deck *deck)
         return 0;
     }
 
+    // drawing random card from the deck top ( shuffled index 0)
     Card currCard = deck->cards[deck->top];
     deck->inplay[deck->top] = 1;
     deck->top++;
@@ -73,6 +76,7 @@ Card drawCard(Deck *deck)
     return currCard;
 }
 
+/* Memory Cleanup */
 void cleanupDeck(Deck *deck)
 {
     if (deck->cards != NULL)
