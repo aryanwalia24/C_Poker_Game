@@ -182,9 +182,8 @@ int displayMenu()
         printf("\n----------------- Texas Hold'em Poker -----------------\n\n");
         printf("1. Start a new round\n");
         printf("2. Exit game\n\n");
-        printf("Choose an option: ");
 
-        choice = getValidIntGame(1, 2, "");
+        choice = getValidIntGame(1, 2, "Choose an option: ");
 
         if (choice == 1)
         {
@@ -450,6 +449,10 @@ void determineWinner(Player *players, int numPlayers, const Card communityCards[
 // Memory Cleanup
 void superCleanup(Player *players, int playerCount)
 {
+    if (players == NULL)
+    {
+        return;
+    }
     for (int i = 0; i < playerCount; i++)
     {
         freePlayer(&players[i]);

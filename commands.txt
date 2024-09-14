@@ -15,3 +15,10 @@ ar rcs libpoker.a src/card.o src/deck.o src/game.o src/player.o src/poker_hand.o
 
 # Compile main file and link with static library
 gcc -I./include main.c -L. -lpoker -o poker_game
+
+
+# For Testfiles
+gcc ../src/[headerfile].o [testfile].c -o [objectfile] -I../include
+
+# run 
+./[objectfile]
